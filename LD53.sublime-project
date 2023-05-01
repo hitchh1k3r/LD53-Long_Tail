@@ -1,0 +1,111 @@
+{
+  "build_systems":
+  [
+    {
+      "name": " Run Native",
+      "working_dir": "$project_path/",
+      "file_regex": "^\\s*(C:.*\\.odin)\\((\\d+):(\\d+)\\)\\s(.*)$",
+      "windows":
+      {
+        "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- win64 win32 opengl run fast",
+      },
+      "linux":
+      {
+        "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- linux64 wayland vulkan run fast",
+      },
+      "osx":
+      {
+        "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- macos_arm64 cocoa metal run fast",
+      },
+      "variants": [
+        {
+          "name": "Debug",
+          "windows":
+          {
+            "cmd": "odin run build/ -debug -o:none -collection:build=./build/ -collection:project=./src/ -- win64 win32 opengl run debug",
+          },
+          "linux":
+          {
+            "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- linux64 wayland vulkan run debug",
+          },
+          "osx":
+          {
+            "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- macos_arm64 cocoa metal run debug",
+          },
+        },
+        {
+          "name": "Release",
+          "windows":
+          {
+            "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- win64 win32 opengl run release",
+          },
+          "linux":
+          {
+            "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- linux64 wayland vulkan run release",
+          },
+          "osx":
+          {
+            "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- macos_arm64 cocoa metal run release",
+          },
+        },
+      ],
+    },
+    {
+      "name": "Build WASM",
+      "working_dir": "$project_path/",
+      "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- wasm32 js webgl build release",
+      "file_regex": "^\\s*(C:.*\\.odin)\\((\\d+):(\\d+)\\)\\s(.*)$",
+      "variants": [
+        {
+          "name": "Fast",
+          "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- wasm32 js webgl build fast",
+        },
+        {
+          "name": "Debug",
+          "cmd": "odin run build/ -collection:build=./build/ -collection:project=./src/ -- wasm32 js webgl build debug",
+        },
+      ],
+    },
+  ],
+  "folders":
+  [
+    {
+      "name": "Odin Core",
+      "path": "../Odin/core",
+    },
+    {
+      "name": "Odin Vendor",
+      "path": "../Odin/vendor",
+    },
+    {
+      "name": "Odin Shared",
+      "path": "../Odin/shared",
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "src",
+        "res",
+        "build",
+      ],
+      "name": "// Project ////////",
+      "path": "./",
+    },
+    {
+      "name": "// Build ///////////",
+      "path": "./build",
+    },
+    {
+      "name": "// Resources //////",
+      "path": "./res",
+    },
+    {
+      "name": "// Source /////////",
+      "path": "./src",
+    },
+  ],
+  "settings":
+  {
+    "atomic_save": true,
+  },
+}

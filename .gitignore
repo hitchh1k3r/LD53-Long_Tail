@@ -1,0 +1,30 @@
+# Generated Files
+*_.odin
+
+# Artifacts
+/artifacts/*
+*.lib
+*.exe
+*.sln
+*.obj
+*.pdb
+*.spall
+
+# Visual Studio
+.vs/
+.vscode/
+
+# Sublime Text
+*.sublime-workspace
+
+# Blender Backup Files
+*.blend1
+*.blend2
+*.blend3
+
+# Emacs Stuff
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+.\#*
