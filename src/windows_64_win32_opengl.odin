@@ -93,6 +93,7 @@ foreign user32 {
 
     input : game.Input
     game.init_game()
+    game.audio_ready()
     last_tick_time := time.tick_now()
 
     msg : w32.MSG
@@ -123,10 +124,6 @@ foreign user32 {
       input.up_press = raw_input.key_up && !last_raw_input.key_up ||
                        raw_input.key_w && !last_raw_input.key_w ||
                        raw_input.key_z && !last_raw_input.key_z
-      input.left_press = raw_input.key_left && !last_raw_input.key_left ||
-                       raw_input.key_a && !last_raw_input.key_a ||
-                       raw_input.key_h && !last_raw_input.key_h ||
-                       raw_input.key_q && !last_raw_input.key_q
       input.left_press = raw_input.key_left && !last_raw_input.key_left ||
                        raw_input.key_a && !last_raw_input.key_a ||
                        raw_input.key_h && !last_raw_input.key_h ||

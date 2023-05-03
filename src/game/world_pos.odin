@@ -58,10 +58,12 @@ direction_back_direction := [Direction]Direction {
   .Right = .Left,
 }
 
-direction_from_string := map[string]Direction {
-  "None" = .None,
-  "Up" = .Up,
-  "Down" = .Down,
-  "Left" = .Left,
-  "Right" = .Right,
+direction_from_string : map[string]Direction
+
+init_world_pos :: proc() {
+  direction_from_string["None"] = .None
+  direction_from_string["Up"] = .Up
+  direction_from_string["Down"] = .Down
+  direction_from_string["Left"] = .Left
+  direction_from_string["Right"] = .Right
 }

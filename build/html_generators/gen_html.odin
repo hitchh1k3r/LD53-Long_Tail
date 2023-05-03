@@ -27,8 +27,9 @@ TEMPLATE_HTML_FILE ::
     `<title>{{page_title}}</title>` +
     `<style>` +
       `*{margin:0;padding:0;}` +
-      `html,body{width:100%;height:100%;overflow:hidden;background:#000;}` +
+      `html,body{width:100%;height:100%;overflow:hidden;background:#090212;}` +
     `</style>` +
+    `<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">` +
   `</head>` +
   `<body>` +
     `<script>{{javascript}}</script>` +

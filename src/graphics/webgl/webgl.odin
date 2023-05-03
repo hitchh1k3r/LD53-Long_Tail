@@ -229,6 +229,14 @@ import "project:graphics"
         shader = material_shaders[graphics.MaterialSprite]
         blend_mode = material.blend_mode
         material_flags = material.flags
+      case graphics.MaterialTilemap:
+        shader = material_shaders[graphics.MaterialTilemap]
+        blend_mode = material.blend_mode
+        material_flags = material.flags
+      case graphics.MaterialEggDoor:
+        shader = material_shaders[graphics.MaterialEggDoor]
+        blend_mode = material.blend_mode
+        material_flags = material.flags
     }
 
     // Setup Shader:
@@ -334,6 +342,18 @@ import "project:graphics"
         draw_call.render_order = material.render_order
         draw_call.sorting = material.sorting
         draw_call.shader = material_shaders[graphics.MaterialSprite]
+        draw_call.blend_mode = material.blend_mode
+        draw_call.material_flags = material.flags
+      case graphics.MaterialEggDoor:
+        draw_call.render_order = material.render_order
+        draw_call.sorting = material.sorting
+        draw_call.shader = material_shaders[graphics.MaterialEggDoor]
+        draw_call.blend_mode = material.blend_mode
+        draw_call.material_flags = material.flags
+      case graphics.MaterialTilemap:
+        draw_call.render_order = material.render_order
+        draw_call.sorting = material.sorting
+        draw_call.shader = material_shaders[graphics.MaterialTilemap]
         draw_call.blend_mode = material.blend_mode
         draw_call.material_flags = material.flags
     }
@@ -641,6 +661,8 @@ import "project:graphics"
 
 // Internal ////////////////////////////////////////////////////////////////////////////////////////
 
+  SPRITE_INSET :: 0.1 / 512.0
+
   MAX_TEXTURES :: 16
 
   TextureBind :: struct {
@@ -655,6 +677,7 @@ import "project:graphics"
     color : graphics.Color,
     rect : graphics.Rect, // TODO (hitch) 2023-03-13 This is not the best way to add new state probably... it's also not being sorted on!
     shader : webgl.Program,
+    egg_count : int,
   }
 
   setup_material_state :: proc(material : graphics.Material, shader : ShaderProgram, last_state : MaterialState, force_state_update := false) -> MaterialState {
@@ -739,10 +762,34 @@ import "project:graphics"
         new_state.color = material.color
 
         if _force_state_update || last_state.rect != material.rect {
-          rect := V4{ material.rect.x, material.rect.y, material.rect.w, material.rect.h }
+          rect := V4{ material.rect.x+SPRITE_INSET, material.rect.y+SPRITE_INSET, material.rect.width-(2*SPRITE_INSET), material.rect.height-(2*SPRITE_INSET) }
           webgl.Uniform4fv(shader.uniforms["u_sprite_rect"], rect)
         }
         new_state.rect = material.rect
+
+      case graphics.MaterialEggDoor:
+        bind_texture(material.spritesheet, shader.uniforms["u_texture"])
+
+        if _force_state_update || last_state.color != material.color {
+          color := material.color
+          webgl.Uniform4fv(shader.uniforms["u_color"], ([4]f32)(color))
+        }
+        new_state.color = material.color
+
+        if _force_state_update || last_state.rect != material.rect {
+          rect := V4{ material.rect.x+SPRITE_INSET, material.rect.y+SPRITE_INSET, material.rect.width-(2*SPRITE_INSET), material.rect.height-(2*SPRITE_INSET) }
+          webgl.Uniform4fv(shader.uniforms["u_sprite_rect"], rect)
+        }
+        new_state.rect = material.rect
+
+        if _force_state_update || last_state.egg_count != material.egg_count {
+          webgl.Uniform1i(shader.uniforms["u_egg_count"], i32(material.egg_count))
+        }
+        new_state.egg_count = material.egg_count
+
+      case graphics.MaterialTilemap:
+        bind_texture(material.tilemap, shader.uniforms["u_tilemap"])
+        bind_buffer_texture(material.tiles, shader.uniforms["u_room_tiles"])
     }
 
     return new_state
@@ -769,6 +816,13 @@ import "project:graphics"
       case graphics.MaterialSprite:
         l_count = 1
         l_textures[0] = get_id(material.spritesheet)
+      case graphics.MaterialEggDoor:
+        l_count = 1
+        l_textures[0] = get_id(material.spritesheet)
+      case graphics.MaterialTilemap:
+        l_count = 2
+        l_textures[0] = get_id(material.tilemap)
+        l_textures[1] = get_id(material.tiles)
     }
     switch material in r {
       case graphics.MaterialUnlit:
@@ -780,6 +834,13 @@ import "project:graphics"
       case graphics.MaterialSprite:
         r_count = 1
         r_textures[0] = get_id(material.spritesheet)
+      case graphics.MaterialEggDoor:
+        r_count = 1
+        r_textures[0] = get_id(material.spritesheet)
+      case graphics.MaterialTilemap:
+        r_count = 2
+        r_textures[0] = get_id(material.tilemap)
+        r_textures[1] = get_id(material.tiles)
     }
 
     if l_count < r_count {
@@ -806,6 +867,10 @@ import "project:graphics"
         l_color = material.color
       case graphics.MaterialSprite:
         l_color = material.color
+      case graphics.MaterialEggDoor:
+        l_color = material.color
+      case graphics.MaterialTilemap:
+        l_color = { 1.0, 1.0, 1.0, 1.0 }
     }
     switch material in r {
       case graphics.MaterialUnlit:
@@ -814,6 +879,10 @@ import "project:graphics"
         r_color = material.color
       case graphics.MaterialSprite:
         r_color = material.color
+      case graphics.MaterialEggDoor:
+        r_color = material.color
+      case graphics.MaterialTilemap:
+        r_color = { 1.0, 1.0, 1.0, 1.0 }
     }
 
     if l_color.r < r_color.r {

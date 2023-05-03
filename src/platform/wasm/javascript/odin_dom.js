@@ -18,91 +18,89 @@ init_event_raw: (ep) => {
 
   let e = event_temp_data.event;
 
-  wmi.storeU32(off(4, 4), event_temp_data.name_code);
+  wmi.storeU32(off(4), event_temp_data.name_code);
   if (e.target == document) {
-    wmi.storeU32(off(4, 4), 1);
+    wmi.storeU32(off(4), 1);
   } else if (e.target == window) {
-    wmi.storeU32(off(4, 4), 2);
+    wmi.storeU32(off(4), 2);
   } else {
-    wmi.storeU32(off(4, 4), 0);
+    wmi.storeU32(off(4), 0);
   }
   if (e.currentTarget == document) {
-    wmi.storeU32(off(4, 4), 1);
+    wmi.storeU32(off(4), 1);
   } else if (e.currentTarget == window) {
-    wmi.storeU32(off(4, 4), 2);
+    wmi.storeU32(off(4), 2);
   } else {
-    wmi.storeU32(off(4, 4), 0);
+    wmi.storeU32(off(4), 0);
   }
 
-  wmi.storeUint(off(W, W), event_temp_data.id_ptr);
-  wmi.storeUint(off(W, W), event_temp_data.id_len);
+  wmi.storeUint(off(W), event_temp_data.id_ptr);
+  wmi.storeUint(off(W), event_temp_data.id_len);
 
-  wmi.storeF64(off(8, 8), e.timeStamp*1e-3);
+  wmi.storeF64(off(8), e.timeStamp*1e-3);
 
-  wmi.storeU8(off(1, W), e.eventPhase);
+  wmi.storeU8(off(1), e.eventPhase);
   let options = 0;
   if (!!e.bubbles)    { options |= 1<<0; }
   if (!!e.cancelable) { options |= 1<<1; }
   if (!!e.composed)   { options |= 1<<2; }
-  wmi.storeU8(off(1, W), options);
-  wmi.storeU8(off(1, W), !!e.isComposing);
-  wmi.storeU8(off(1, W), !!e.isTrusted);
+  wmi.storeU8(off(1), options);
+  wmi.storeU8(off(1), !!e.isComposing);
+  wmi.storeU8(off(1), !!e.isTrusted);
 
   let base = off(0, 8);
   off(W*2, W)
   if (e instanceof MouseEvent) {
-    wmi.storeI64(off(8, 8), e.screenX);
-    wmi.storeI64(off(8, 8), e.screenY);
-    wmi.storeI64(off(8, 8), e.clientX);
-    wmi.storeI64(off(8, 8), e.clientY);
-    wmi.storeI64(off(8, 8), e.offsetX);
-    wmi.storeI64(off(8, 8), e.offsetY);
-    wmi.storeI64(off(8, 8), e.pageX);
-    wmi.storeI64(off(8, 8), e.pageY);
-    wmi.storeI64(off(8, 8), e.movementX);
-    wmi.storeI64(off(8, 8), e.movementY);
+    wmi.storeI64(off(8), e.screenX);
+    wmi.storeI64(off(8), e.screenY);
+    wmi.storeI64(off(8), e.clientX);
+    wmi.storeI64(off(8), e.clientY);
+    wmi.storeI64(off(8), e.offsetX);
+    wmi.storeI64(off(8), e.offsetY);
+    wmi.storeI64(off(8), e.pageX);
+    wmi.storeI64(off(8), e.pageY);
+    wmi.storeI64(off(8), e.movementX);
+    wmi.storeI64(off(8), e.movementY);
 
-    wmi.storeU8(off(1, W), !!e.ctrlKey);
-    wmi.storeU8(off(1, W), !!e.shiftKey);
-    wmi.storeU8(off(1, W), !!e.altKey);
-    wmi.storeU8(off(1, W), !!e.metaKey);
+    wmi.storeU8(off(1), !!e.ctrlKey);
+    wmi.storeU8(off(1), !!e.shiftKey);
+    wmi.storeU8(off(1), !!e.altKey);
+    wmi.storeU8(off(1), !!e.metaKey);
 
-    wmi.storeI16(off(2, W), e.button);
-    wmi.storeU16(off(2, W), e.buttons);
+    wmi.storeI16(off(2), e.button);
+    wmi.storeU16(off(2), e.buttons);
   } else if (e instanceof KeyboardEvent) {
     let keyOffset = off(W*2, W);
     let codeOffset = off(W*2, W);
-    wmi.storeU8(off(1, W), e.location);
+    wmi.storeU8(off(1), e.location);
 
-    wmi.storeU8(off(1, W), !!e.ctrlKey);
-    wmi.storeU8(off(1, W), !!e.shiftKey);
-    wmi.storeU8(off(1, W), !!e.altKey);
-    wmi.storeU8(off(1, W), !!e.metaKey);
+    wmi.storeU8(off(1), !!e.ctrlKey);
+    wmi.storeU8(off(1), !!e.shiftKey);
+    wmi.storeU8(off(1), !!e.altKey);
+    wmi.storeU8(off(1), !!e.metaKey);
 
-    wmi.storeU8(off(1, W), !!e.repeat);
+    wmi.storeU8(off(1), !!e.repeat);
 
-    let keyBuffer = off(16, 16);
+    let keyBuffer = off(16);
     let keyLen = Math.min(16, e.key.length);
     wmi.loadBytes(keyBuffer, keyLen).set(new TextEncoder("utf-8").encode(e.key))
     wmi.storeUint(keyOffset, keyBuffer);
     wmi.storeUint(keyOffset + W, keyLen);
 
-    let codeBuffer = off(16, 16);
+    let codeBuffer = off(16);
     let codeLen = Math.min(16, e.code.length);
     wmi.loadBytes(codeBuffer, codeLen).set(new TextEncoder("utf-8").encode(e.code))
     wmi.storeUint(codeOffset, codeBuffer);
     wmi.storeUint(codeOffset + W, codeLen);
   } else if (e instanceof WheelEvent) {
-    wmi.storeF64(off(8, 8), e.deltaX);
-    wmi.storeF64(off(8, 8), e.deltaY);
-    wmi.storeF64(off(8, 8), e.deltaZ);
-    wmi.storeU32(off(4, 4), e.deltaMode);
+    wmi.storeF64(off(8), e.deltaX);
+    wmi.storeF64(off(8), e.deltaY);
+    wmi.storeF64(off(8), e.deltaZ);
+    wmi.storeU32(off(4), e.deltaMode);
   } else if (e instanceof Event) {
     if ('scrollX' in e) {
-      wmi.storeF64(off(8, 8), e.scrollX);
-    }
-    if ('scrollY' in e) {
-      wmi.storeF64(off(8, 8), e.scrollY);
+      wmi.storeF64(off(8), e.scrollX);
+      wmi.storeF64(off(8), e.scrollY);
     }
   }
 },

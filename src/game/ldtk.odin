@@ -49,11 +49,6 @@ world : World
 
   GRID_SIZE :: 16
 
-  @(private="file")
-  texture_lookup := map[string]platform.ResourceImage {
-    "tileset.png" = .Tileset,
-  }
-
 // Interface ///////////////////////////////////////////////////////////////////////////////////////
 
   load_world :: proc() {
@@ -204,6 +199,10 @@ world : World
   load_ldtk_world :: proc(file : platform.ResourceLevel) -> (world : World, ok : bool) {
     using world
     strings.intern_init(&string_intern)
+
+    texture_lookup := map[string]platform.ResourceImage {
+      "tileset.png" = .Tileset,
+    }
 
     if world_json_bytes, file_ok := platform.load_resource(file); file_ok {
       defer platform.free_resource(world_json_bytes)

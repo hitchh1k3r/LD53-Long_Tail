@@ -395,7 +395,7 @@ DEBUG_COMMANDS :: false
         }
 
       case target_platform == .WASM_32 && system_api == .Javascript && graphics_lib == .WebGL:
-        HTML_TITLE :: "Jellbreak 2023"
+        HTML_TITLE :: "Long Tail"
         WEBGL_VERSION :: html_generators.WebGL_Version.WebGL_2
         SRC :: "src/wasm_js_webgl.odin -file"
         WASM_FULL :: "artifacts/wasm_js_webgl/_temp/full.wasm"

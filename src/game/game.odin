@@ -64,11 +64,14 @@ init_game :: proc() {
 
   load_default_graphics()
 
+  init_world_pos()
   dragon = new_entity(EntityDragon{})
   load_world()
   find_current_room()
   camera_pos = camera_target
+}
 
+audio_ready :: proc() {
   if bg_music_data, ok := platform.load_resource(.Music); ok {
     music.bg_music, _ = platform.create_sound(bg_music_data, true, true)
     platform.play_sound(music.bg_music)
